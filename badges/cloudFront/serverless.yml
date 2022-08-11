@@ -1,0 +1,103 @@
+service: cloudfront-origin-response-${self:provider.tag}
+
+package:
+  excludeDevDependencies: false
+  individually: true
+  exclude:
+    - node_modules/**
+    - node_modules/**/**/**/aws-sdk/**
+    - "**/*"
+
+resources:
+  Resources:
+    edgeLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+                  - edgelambda.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Policies:
+          - PolicyName: lambda-edge-policy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - xray:PutTraceSegments
+                    - xray:PutTelemetryRecords
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                  Resource: "arn:aws:logs:*:#{AWS::AccountId}:*"
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: "arn:aws:logs:*:#{AWS::AccountId}:log-group:/aws/lambda/*:*"
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  tag: ${opt:tag}
+  tracing:
+    lambda: true
+  stackName: ${self:service.name}
+  deploymentBucket: ${opt:deploymentBucket}
+  logRetentionInDays: 14
+
+functions:
+  cf-origin-response:
+    handler: originResponse/index.handler
+    name: cf-origin-response-${self:provider.tag}
+    description: The funcation auto triggerd after cloud front called to origin (origin-respnse)
+    role: edgeLambdaRole
+    memorySize: 128
+    timeout: 2
+    tags:
+      git_commit: acb73ff98686a4fce21d7b4e9beefd002ffd4b22
+      git_file: src/vcs/badges/cloudFront/serverless.yml
+      git_last_modified_at: 2021-11-08 16:35:32
+      git_last_modified_by: yyacoby@paloaltonetworks.com
+      git_modifiers: yehuda.livnoni/yyacoby
+      git_org: bridgecrewio
+      git_repo: platform
+      yor_trace: 26583af2-399c-48ef-b05f-62ed6ca59a78
+      team: ecosystem
+  cf-viewer-request:
+    handler: viewerRequest/index.handler
+    name: cf-viewer-request-${self:provider.tag}
+    description: The funcation auto triggerd before cloud front called to origin (origin-request)
+    role: edgeLambdaRole
+    memorySize: 128
+    timeout: 2
+    tags:
+      git_commit: b166ac8811d0d7c50eb490e4fcd769580d3c3144
+      git_file: src/vcs/badges/cloudFront/serverless.yml
+      git_last_modified_at: 2022-01-20 23:24:53
+      git_last_modified_by: ci-build@bridgecrew.io
+      git_modifiers: ci-build/yehuda.livnoni
+      git_org: bridgecrewio
+      git_repo: platform
+      yor_trace: 23e53bdb-9ec0-48fd-956c-d2a98bf451e4
+      team: ecosystem
+
+custom:
+  epsagon:
+    token: b8454f3b-9f23-48dc-b5fc-53373f2103af
+    appName: bc-${opt:tag}-ecosystem
+    disable: ${self:custom.disableEpsagon.${opt:tag, "dev"}, "true"}
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-include-dependencies
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+  - serverless-package-external
+  - serverless-plugin-epsagon
