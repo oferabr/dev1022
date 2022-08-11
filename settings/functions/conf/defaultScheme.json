@@ -1,0 +1,7 @@
+{
+  "scannedFiles": { "excludePaths": [] },
+  "codeReviews": { "severityLevel": "LOW", "excludePolicies": [] },
+  "prComments": { "severityLevel": "LOW", "excludePolicies": [] },
+  "yorTag": { "excludePaths": [] },
+  "pcNotifications": { "severityLevel": "LOW", "excludePolicies": [], "pcNotificationIntegrations": [] }
+}
