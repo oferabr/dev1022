@@ -1,3 +1,431 @@
+diff --git a/.DS_Store b/.DS_Store
+new file mode 100644
+index 0000000..0e3a873
+Binary files /dev/null and b/.DS_Store differ
+diff --git a/diff.txt b/diff.txt
+new file mode 100644
+index 0000000..629b1b4
+--- /dev/null
++++ b/diff.txt
+@@ -0,0 +1,214 @@
++diff --git a/s3.tf b/s3.tf
++index dc26e1c..ced5ca2 100644
++--- a/s3.tf
+++++ b/s3.tf
++@@ -2,6 +2,9 @@ resource "aws_s3_bucket" "data" {
++   
++   
++   # bucket is public
+++
+++
+++  
++   # bucket is not encrypted
++   # bucket does not have access logs
++   # bucket does not have versioning
++diff --git a/s32.tf b/s32.tf
++new file mode 100644
++index 0000000..dc26e1c
++--- /dev/null
+++++ b/s32.tf
++@@ -0,0 +1,194 @@
+++resource "aws_s3_bucket" "data" {
+++  
+++  
+++  # bucket is public
+++  # bucket is not encrypted
+++  # bucket does not have access logs
+++  # bucket does not have versioning
+++  bucket        = "${local.resource_prefix.value}-data"
+++  acl           = "public-read"
+++  force_destroy = true
+++  tags = merge({
+++    Name        = "${local.resource_prefix.value}-data"
+++    Environment = local.resource_prefix.value
+++    }, {
+++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
+++    git_file             = "terraform/aws/s3.tf"
+++    git_last_modified_at = "2020-06-16 14:46:24"
+++    git_last_modified_by = "nimrodkor@gmail.com"
+++    git_modifiers        = "nimrodkor"
+++    git_org              = "bridgecrewio"
+++    git_repo             = "terragoat"
+++    yor_trace            = "0874007d-903a-4b4c-945f-c9c233e13243"
+++  })
+++}
+++
+++
+++resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
+++  bucket = aws_s3_bucket.data.bucket
+++
+++  rule {
+++    apply_server_side_encryption_by_default {
+++      sse_algorithm     = "aws:kms"
+++    }
+++  }
+++}
+++
+++
+++
+++resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
+++  bucket = aws_s3_bucket.data.bucket
+++
+++  rule {
+++    apply_server_side_encryption_by_default {
+++      sse_algorithm     = "aws:kms"
+++    }
+++  }
+++}
+++
+++
+++
+++resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
+++  bucket = aws_s3_bucket.data.bucket
+++
+++  rule {
+++    apply_server_side_encryption_by_default {
+++      sse_algorithm     = "AES256"
+++    }
+++  }
+++}
+++
+++
+++
+++resource "aws_s3_bucket" "data_log_bucket" {
+++  bucket = "data-log-bucket"
+++}
+++
+++resource "aws_s3_bucket_logging" "data" {
+++  bucket = aws_s3_bucket.data.id
+++
+++  target_bucket = aws_s3_bucket.data_log_bucket.id
+++  target_prefix = "log/"
+++}
+++
+++
+++resource "aws_s3_bucket_object" "data_object" {
+++  bucket = aws_s3_bucket.data.id
+++  key    = "customer-master.xlsx"
+++  source = "resources/customer-master.xlsx"
+++  tags = merge({
+++    Name        = "${local.resource_prefix.value}-customer-master"
+++    Environment = local.resource_prefix.value
+++    }, {
+++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
+++    git_file             = "terraform/aws/s3.tf"
+++    git_last_modified_at = "2020-06-16 14:46:24"
+++    git_last_modified_by = "nimrodkor@gmail.com"
+++    git_modifiers        = "nimrodkor"
+++    git_org              = "bridgecrewio"
+++    git_repo             = "terragoat"
+++    yor_trace            = "a7f01cc7-63c2-41a8-8555-6665e5e39a64"
+++  })
+++}
+++
+++resource "aws_s3_bucket" "financials" {
+++  # bucket is not encrypted
+++  # bucket does not have access logs
+++  # bucket does not have versioning
+++  bucket        = "${local.resource_prefix.value}-financials"
+++  acl           = "private"
+++  force_destroy = true
+++  tags = merge({
+++    Name        = "${local.resource_prefix.value}-financials"
+++    Environment = local.resource_prefix.value
+++    }, {
+++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
+++    git_file             = "terraform/aws/s3.tf"
+++    git_last_modified_at = "2020-06-16 14:46:24"
+++    git_last_modified_by = "nimrodkor@gmail.com"
+++    git_modifiers        = "nimrodkor"
+++    git_org              = "bridgecrewio"
+++    git_repo             = "terragoat"
+++    yor_trace            = "0e012640-b597-4e5d-9378-d4b584aea913"
+++  })
+++
+++}
+++
+++resource "aws_s3_bucket" "operations" {
+++  # bucket is not encrypted
+++  # bucket does not have access logs
+++  bucket = "${local.resource_prefix.value}-operations"
+++  acl    = "private"
+++  versioning {
+++    enabled = true
+++  }
+++  force_destroy = true
+++  tags = merge({
+++    Name        = "${local.resource_prefix.value}-operations"
+++    Environment = local.resource_prefix.value
+++    }, {
+++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
+++    git_file             = "terraform/aws/s3.tf"
+++    git_last_modified_at = "2020-06-16 14:46:24"
+++    git_last_modified_by = "nimrodkor@gmail.com"
+++    git_modifiers        = "nimrodkor"
+++    git_org              = "bridgecrewio"
+++    git_repo             = "terragoat"
+++    yor_trace            = "29efcf7b-22a8-4bd6-8e14-1f55b3a2d743"
+++  })
+++
+++}
+++
+++resource "aws_s3_bucket" "data_science" {
+++  # bucket is not encrypted
+++  bucket = "${local.resource_prefix.value}-data-science"
+++  acl    = "private"
+++  versioning {
+++    enabled = true
+++  }
+++  logging {
+++    target_bucket = "${aws_s3_bucket.logs.id}"
+++    target_prefix = "log/"
+++  }
+++  force_destroy = true
+++  tags = {
+++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
+++    git_file             = "terraform/aws/s3.tf"
+++    git_last_modified_at = "2020-06-16 14:46:24"
+++    git_last_modified_by = "nimrodkor@gmail.com"
+++    git_modifiers        = "nimrodkor"
+++    git_org              = "bridgecrewio"
+++    git_repo             = "terragoat"
+++    yor_trace            = "9a7c8788-5655-4708-bbc3-64ead9847f64"
+++  }
+++}
+++
+++resource "aws_s3_bucket" "logs" {
+++  bucket = "${local.resource_prefix.value}-logs"
+++  acl    = "log-delivery-write"
+++  versioning {
+++    enabled = true
+++  }
+++  server_side_encryption_configuration {
+++    rule {
+++      apply_server_side_encryption_by_default {
+++        sse_algorithm     = "aws:kms"
+++        kms_master_key_id = "${aws_kms_key.logs_key.arn}"
+++      }
+++    }
+++  }
+++  force_destroy = true
+++  tags = merge({
+++    Name        = "${local.resource_prefix.value}-logs"
+++    Environment = local.resource_prefix.value
+++    }, {
+++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
+++    git_file             = "terraform/aws/s3.tf"
+++    git_last_modified_at = "2020-06-16 14:46:24"
+++    git_last_modified_by = "nimrodkor@gmail.com"
+++    git_modifiers        = "nimrodkor"
+++    git_org              = "bridgecrewio"
+++    git_repo             = "terragoat"
+++    yor_trace            = "01946fe9-aae2-4c99-a975-e9b0d3a4696c"
+++  })
+++}
+diff --git a/newfor/.DS_Store b/newfor/.DS_Store
+new file mode 100644
+index 0000000..881be3b
+Binary files /dev/null and b/newfor/.DS_Store differ
+diff --git a/newfor/s4.tf b/newfor/s4.tf
+new file mode 100644
+index 0000000..dc26e1c
+--- /dev/null
++++ b/newfor/s4.tf
+@@ -0,0 +1,194 @@
++resource "aws_s3_bucket" "data" {
++  
++  
++  # bucket is public
++  # bucket is not encrypted
++  # bucket does not have access logs
++  # bucket does not have versioning
++  bucket        = "${local.resource_prefix.value}-data"
++  acl           = "public-read"
++  force_destroy = true
++  tags = merge({
++    Name        = "${local.resource_prefix.value}-data"
++    Environment = local.resource_prefix.value
++    }, {
++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
++    git_file             = "terraform/aws/s3.tf"
++    git_last_modified_at = "2020-06-16 14:46:24"
++    git_last_modified_by = "nimrodkor@gmail.com"
++    git_modifiers        = "nimrodkor"
++    git_org              = "bridgecrewio"
++    git_repo             = "terragoat"
++    yor_trace            = "0874007d-903a-4b4c-945f-c9c233e13243"
++  })
++}
++
++
++resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
++  bucket = aws_s3_bucket.data.bucket
++
++  rule {
++    apply_server_side_encryption_by_default {
++      sse_algorithm     = "aws:kms"
++    }
++  }
++}
++
++
++
++resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
++  bucket = aws_s3_bucket.data.bucket
++
++  rule {
++    apply_server_side_encryption_by_default {
++      sse_algorithm     = "aws:kms"
++    }
++  }
++}
++
++
++
++resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
++  bucket = aws_s3_bucket.data.bucket
++
++  rule {
++    apply_server_side_encryption_by_default {
++      sse_algorithm     = "AES256"
++    }
++  }
++}
++
++
++
++resource "aws_s3_bucket" "data_log_bucket" {
++  bucket = "data-log-bucket"
++}
++
++resource "aws_s3_bucket_logging" "data" {
++  bucket = aws_s3_bucket.data.id
++
++  target_bucket = aws_s3_bucket.data_log_bucket.id
++  target_prefix = "log/"
++}
++
++
++resource "aws_s3_bucket_object" "data_object" {
++  bucket = aws_s3_bucket.data.id
++  key    = "customer-master.xlsx"
++  source = "resources/customer-master.xlsx"
++  tags = merge({
++    Name        = "${local.resource_prefix.value}-customer-master"
++    Environment = local.resource_prefix.value
++    }, {
++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
++    git_file             = "terraform/aws/s3.tf"
++    git_last_modified_at = "2020-06-16 14:46:24"
++    git_last_modified_by = "nimrodkor@gmail.com"
++    git_modifiers        = "nimrodkor"
++    git_org              = "bridgecrewio"
++    git_repo             = "terragoat"
++    yor_trace            = "a7f01cc7-63c2-41a8-8555-6665e5e39a64"
++  })
++}
++
++resource "aws_s3_bucket" "financials" {
++  # bucket is not encrypted
++  # bucket does not have access logs
++  # bucket does not have versioning
++  bucket        = "${local.resource_prefix.value}-financials"
++  acl           = "private"
++  force_destroy = true
++  tags = merge({
++    Name        = "${local.resource_prefix.value}-financials"
++    Environment = local.resource_prefix.value
++    }, {
++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
++    git_file             = "terraform/aws/s3.tf"
++    git_last_modified_at = "2020-06-16 14:46:24"
++    git_last_modified_by = "nimrodkor@gmail.com"
++    git_modifiers        = "nimrodkor"
++    git_org              = "bridgecrewio"
++    git_repo             = "terragoat"
++    yor_trace            = "0e012640-b597-4e5d-9378-d4b584aea913"
++  })
++
++}
++
++resource "aws_s3_bucket" "operations" {
++  # bucket is not encrypted
++  # bucket does not have access logs
++  bucket = "${local.resource_prefix.value}-operations"
++  acl    = "private"
++  versioning {
++    enabled = true
++  }
++  force_destroy = true
++  tags = merge({
++    Name        = "${local.resource_prefix.value}-operations"
++    Environment = local.resource_prefix.value
++    }, {
++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
++    git_file             = "terraform/aws/s3.tf"
++    git_last_modified_at = "2020-06-16 14:46:24"
++    git_last_modified_by = "nimrodkor@gmail.com"
++    git_modifiers        = "nimrodkor"
++    git_org              = "bridgecrewio"
++    git_repo             = "terragoat"
++    yor_trace            = "29efcf7b-22a8-4bd6-8e14-1f55b3a2d743"
++  })
++
++}
++
++resource "aws_s3_bucket" "data_science" {
++  # bucket is not encrypted
++  bucket = "${local.resource_prefix.value}-data-science"
++  acl    = "private"
++  versioning {
++    enabled = true
++  }
++  logging {
++    target_bucket = "${aws_s3_bucket.logs.id}"
++    target_prefix = "log/"
++  }
++  force_destroy = true
++  tags = {
++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
++    git_file             = "terraform/aws/s3.tf"
++    git_last_modified_at = "2020-06-16 14:46:24"
++    git_last_modified_by = "nimrodkor@gmail.com"
++    git_modifiers        = "nimrodkor"
++    git_org              = "bridgecrewio"
++    git_repo             = "terragoat"
++    yor_trace            = "9a7c8788-5655-4708-bbc3-64ead9847f64"
++  }
++}
++
++resource "aws_s3_bucket" "logs" {
++  bucket = "${local.resource_prefix.value}-logs"
++  acl    = "log-delivery-write"
++  versioning {
++    enabled = true
++  }
++  server_side_encryption_configuration {
++    rule {
++      apply_server_side_encryption_by_default {
++        sse_algorithm     = "aws:kms"
++        kms_master_key_id = "${aws_kms_key.logs_key.arn}"
++      }
++    }
++  }
++  force_destroy = true
++  tags = merge({
++    Name        = "${local.resource_prefix.value}-logs"
++    Environment = local.resource_prefix.value
++    }, {
++    git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
++    git_file             = "terraform/aws/s3.tf"
++    git_last_modified_at = "2020-06-16 14:46:24"
++    git_last_modified_by = "nimrodkor@gmail.com"
++    git_modifiers        = "nimrodkor"
++    git_org              = "bridgecrewio"
++    git_repo             = "terragoat"
++    yor_trace            = "01946fe9-aae2-4c99-a975-e9b0d3a4696c"
++  })
++}
 diff --git a/s3.tf b/s3.tf
 index dc26e1c..ced5ca2 100644
 --- a/s3.tf
