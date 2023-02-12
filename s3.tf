@@ -5,6 +5,9 @@ resource "aws_s3_bucket" "data" {
   # bucket is not encrypted
   # bucket does not have access logs
   # bucket does not have versioning
+
+
+
   bucket        = "${local.resource_prefix.value}-data"
   acl           = "public-read"
   force_destroy = true
@@ -18,6 +21,10 @@ resource "aws_s3_bucket" "data" {
     git_last_modified_by = "nimrodkor@gmail.com"
     git_modifiers        = "nimrodkor"
     git_org              = "bridgecrewio"
+
+
+
+    
     git_repo             = "terragoat"
     yor_trace            = "0874007d-903a-4b4c-945f-c9c233e13243"
   })
