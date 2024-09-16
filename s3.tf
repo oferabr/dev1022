@@ -1,5 +1,8 @@
 resource "aws_s3_bucket" "data" {
-  
+
+
+
+
   
   # bucket is public
   # bucket is not encrypted
@@ -33,6 +36,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
     }
   }
 }
+
+
 
 
 
