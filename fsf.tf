@@ -12,6 +12,10 @@ resource "aws_s3_bucket" "data" {
   acl           = "public-read"
   force_destroy = true
   tags = merge({
+
+
+
+
     Name        = "${local.resource_prefix.value}-data"
     Environment = local.resource_prefix.value
     }, {
@@ -60,6 +64,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
     }
   }
 }
+
+
+
 
 
 
