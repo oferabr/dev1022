@@ -120,6 +120,19 @@ resource "aws_s3_bucket" "financials" {
 
 }
 
+
+resource "aws_s3_bucket" "financials_log_bucket" {
+  bucket = "financials-log-bucket"
+}
+
+resource "aws_s3_bucket_logging" "financials" {
+  bucket = aws_s3_bucket.financials.id
+
+  target_bucket = aws_s3_bucket.financials_log_bucket.id
+  target_prefix = "log/"
+}
+
+
 resource "aws_s3_bucket" "operations" {
   # bucket is not encrypted
   # bucket does not have access logs
@@ -203,6 +216,16 @@ resource "aws_s3_bucket" "logs" {
 resource "aws_s3_bucket" "logs_log_bucket" {
   bucket = "logs-log-bucket"
 }
+
+
+resource "aws_s3_bucket_versioning" "logs_log_bucket" {
+  bucket = aws_s3_bucket.logs_log_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 
 resource "aws_s3_bucket_logging" "logs" {
   bucket = aws_s3_bucket.logs.id
